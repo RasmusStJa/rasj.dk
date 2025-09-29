@@ -1,5 +1,5 @@
 # rasj.dk
-Tihs project about porting my old webserver code from PHP to Go.
+This project about porting my old webserver code from PHP to Go.
 
 ## Done
 - [x] Navigation bar generator
