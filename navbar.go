@@ -45,7 +45,7 @@ func (btn navBtn) HTML(url *link) string {
 	var result string
 	switch btn.btnType {
 	case legalTypes[0]: //button
-		result = "<button href='" + url.get() + btn.dir + "'>" + btn.name + "</button>"
+		result = "<button onclick=\"location.href='" + url.get() + btn.dir + "'\">" + btn.name + "</button>"
 	case legalTypes[1]: //collapse
 		url.addDir(btn.dir)
 		result = "<button id='toggleButton'>" + btn.name + ":" + "</button>" + "<div id='collapsibleDiv' style='display: none;'>"
