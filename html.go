@@ -19,7 +19,22 @@ type element struct {
 	children   []element
 }
 
+func (e *element) appendAttribute(attr attribute) {
+	e.attributes = append(e.attributes, attr)
+}
+func (e *element) AppendChild(child element) {
+	e.children = append(e.children, child)
+}
+func (e *element) AppendChildren(children []element) {
+	for _, child := range children {
+		e.AppendChild(child)
+	}
+}
+
 func (e element) HTML() string {
+	if e.tag == "" {
+		panic("This element has an undefined tag: " + e.HTML())
+	}
 	var result string
 	result = "<" + e.tag
 	for _, attr := range e.attributes {
