@@ -11,7 +11,7 @@ import (
 )
 
 const stylepth string = "style.css"
-
+/*
 func getNavbar() navBar {
 	var mainNavBar navBar
 	mainNavBar.AppendBtn(navBtn{name: "Forside", dir: "/", btnType: "button"})
@@ -21,7 +21,7 @@ func getNavbar() navBar {
 	mainNavBar.AppendBtn(navBtn{btnType: "end"})
 	return mainNavBar
 }
-
+*/
 func getRoot(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Got / request")
 	head := header{stylepath: stylepth}
@@ -34,7 +34,7 @@ func getRoot(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "text/html")
 	io.WriteString(w, head.HTML())
 	io.WriteString(w, pageBody.HTML())
-	//io.WriteString(w, getNavbar().HTML())
+	//io.WriteString(w, ().HTML())
 }
 
 func isprime(n int) bool {
