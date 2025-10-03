@@ -85,7 +85,7 @@ func getPrime(w http.ResponseWriter, r *http.Request) {
 		}
 		pageBody.AppendChild(element{tag: "p", innerText: "Here are the next 3 prime times:"})
 		pageBody.AppendChildren(primes)*/
-
+ io.WriteString(w, head.HTML())
 	io.WriteString(w, pageBody.HTML())
 }
 
