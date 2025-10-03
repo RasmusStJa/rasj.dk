@@ -57,6 +57,25 @@ func isprime(n int) bool {
 	return true
 }
 
+func getFactors(n int) []int {
+	if n < 2 || n%2 == 0 {
+		return []int{}
+	}
+	if n == 2 {
+		return []int{2}
+	}
+	factors := []int{}
+	for i := 3; i*i <= n; i += 2 {
+		if n%i == 0 {
+			factors = append(factors, i)
+		}
+	}
+	if n > 1 {
+		factors = append(factors, n/factors[len(factors)-1])
+	}
+	return factors
+}
+
 func getPrime(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Got /isnowaprime request")
 
@@ -72,6 +91,16 @@ func getPrime(w http.ResponseWriter, r *http.Request) {
 		pageBody.AppendChild(element{tag: "p", innerText: "Yes"})
 	} else {
 		pageBody.AppendChild(element{tag: "p", innerText: "No"})
+		factors := getFactors(now)
+		if len(factors) > 0 {
+			pageBody.AppendChild(element{tag: "p", innerText: "Here are its factors:"})
+			list := element{tag: "ul", children: []element{}}
+
+			for _, f := range factors {
+				list.AppendChild(element{tag: "li", innerText: strconv.Itoa(f)})
+			}
+			pageBody.AppendChild(list)
+		}
 	}
 	/*
 		var primes []element
