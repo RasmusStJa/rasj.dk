@@ -30,7 +30,7 @@ func getRoot(w http.ResponseWriter, r *http.Request) {
 
 	pageBody.AppendChild(element{tag: "h1", innerText: "Example page"})
 	pageBody.AppendChild(element{tag: "p", innerText: "The time is currently " + time.Now().Format("15:04")})
-	pageBody.AppendChild(element{tag: "button", innerText: "Is now a prime?", attributes: []attribute{{name: "onclick", value: "location.href='https://pi.rasj.dk/isnowaprime'"}}})
+	pageBody.AppendChild(element{tag: "button", innerText: "Is now a prime?", attributes: []attribute{{name: "onclick", value: "location.href=\"https://pi.rasj.dk/isnowaprime\""}}})
 	
 	w.Header().Add("Content-Type", "text/html")
 	io.WriteString(w, head.HTML())
