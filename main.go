@@ -63,6 +63,7 @@ func getPrime(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "text/html")
 
 	pageBody := element{tag: "body"}
+	head := header{stylepath: stylepth}
 
 	now, _ := strconv.Atoi(time.Now().Format("0601021504"))
 	pageBody.AppendChild(element{tag: "h1", innerText: "Is now a prime?"})
