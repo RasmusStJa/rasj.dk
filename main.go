@@ -49,7 +49,7 @@ func isprime(n int) bool {
 		return false
 	}
 
-	for i := 3; i*i <= n; n += 2 {
+	for i := 3; i*i <= n; i += 2 {
 		if n%i == 0 {
 			return false
 		}
