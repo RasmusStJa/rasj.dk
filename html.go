@@ -31,6 +31,12 @@ func (e *element) AppendChildren(children []element) {
 	}
 }
 
+func (e *element) createBtn(name string, url string) {
+	e.tag = "button"
+	e.innerText = name
+	e.attributes = []attribute{{name: "onclick", value: "location.href=\"" + url + "\""}}
+}
+
 func (e element) HTML() string {
 	if e.tag == "" {
 		panic("This element has an undefined tag: " + e.HTML())
