@@ -10,8 +10,6 @@ import (
 	"time"
 )
 
-const stylepth string = "style.css"
-
 /*
 	func getNavbar() navBar {
 		var mainNavBar navBar
