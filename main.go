@@ -119,7 +119,7 @@ func getRoot(w http.ResponseWriter, r *http.Request) {
 	about := element{}
 	nowaprime := element{}
 	about.createBtn("About", "https://pi.rasj.dk/about")
-	nowaprime.createBtn("Is now a prime?", "https://pi.rasj.dk/isnowaprmie")
+	nowaprime.createBtn("Is now a prime?", "https://pi.rasj.dk/isnowaprime")
 	
 	pageBody.AppendChild(element{tag: "h1", innerText: "Example page"})
 	pageBody.AppendChild(element{tag: "p", innerText: "The time is currently " + time.Now().Format("15:04")})
