@@ -116,11 +116,15 @@ func getRoot(w http.ResponseWriter, r *http.Request) {
 	head := header{}
 
 	pageBody := element{tag: "body"}
-
+	about := element{}
+	nowaprime := element{}
+	about.createBtn("About", "https://pi.rasj.dk/about")
+	nowaprime.createBtn("Is now a prime?", "https://pi.rasj.dk/isnowaprmie")
+	
 	pageBody.AppendChild(element{tag: "h1", innerText: "Example page"})
 	pageBody.AppendChild(element{tag: "p", innerText: "The time is currently " + time.Now().Format("15:04")})
-	pageBody.AppendChild(element{tag: "button", innerText: "About", attributes: []attribute{{name: "onclick", value: "location.href=\"https://pi.rasj.dk/about\""}}})
-	pageBody.AppendChild(element{tag: "button", innerText: "Is now a prime?", attributes: []attribute{{name: "onclick", value: "location.href=\"https://pi.rasj.dk/isnowaprime\""}}})
+	pageBody.AppendChild(about)
+	pageBody.AppendChild(nowaprime)
 
 	w.Header().Add("Content-Type", "text/html")
 	io.WriteString(w, head.HTML())
