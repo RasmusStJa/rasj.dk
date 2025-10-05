@@ -113,7 +113,7 @@ func getPrime(w http.ResponseWriter, r *http.Request) {
 
 func getRoot(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Got / request")
-	head := header{stylepath: stylepth}
+	head := header{}
 
 	pageBody := element{tag: "body"}
 
