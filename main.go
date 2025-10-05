@@ -25,7 +25,7 @@ func getAbout(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Got /about request")
 	w.Header().Add("Content-Type", "text/html")
 
-	head := header{stylepath: stylepth}
+	head := header{}
 	pageBody := element{tag: "body"}
 
 	pageBody.AppendChild(element{tag: "h1", innerText: "About"})
