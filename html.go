@@ -57,6 +57,7 @@ func (e *element) CreateNavBar() {
 	btn.CreateBtn("Is now a prime?", url+"isnowaprime")
 	e.AppendChild(btn)
 	btn.CreateBtn("Er det fredag idag?", url+"fredag")
+	e.AppendChild(btn)
 }
 
 func (e element) HTML() string {
