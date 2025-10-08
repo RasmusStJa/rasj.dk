@@ -113,20 +113,39 @@ func getPrime(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, pageBody.HTML())
 }
 
+func getFredag(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("got /fredag request")
+
+	head := header{}
+	pageBody := element{}
+
+	pageBody.CreateBody()
+
+	pageBody.AppendChild(element{tag: "h1", innerText: "Er det fredag idag?"})
+	//day,_ := strconv.Atoi(time.Weekday())
+	p := element{tag: "p"}
+	if int(time.Now().Weekday()) == 5 {
+		p.innerText = "JAAAA!!!!!!!!"
+	} else {
+		p.innerText = "nej >:("
+	}
+	pageBody.AppendChild(p)
+
+	w.Header().Add("Content-Type", "text/html")
+	io.WriteString(w, head.HTML())
+	io.WriteString(w, pageBody.HTML())
+}
+
 func getRoot(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Got / request")
 
 	head := header{}
 	pageBody := element{}
-	about := element{}
-	nowaprime := element{}
-	navBar := element{tag: "div"}
+	navBar := element{}
 
 	pageBody.CreateBody()
-	about.CreateBtn("About", "https://pi.rasj.dk/about")
-	nowaprime.CreateBtn("Is now a prime?", "https://pi.rasj.dk/isnowaprime")
 
-	navBar.AppendChildren([]element{about, nowaprime})
+	navBar.CreateNavBar()
 	pageBody.AppendChild(element{tag: "h1", innerText: "Example page"})
 	//pageBody.AppendChild(about)
 	//pageBody.AppendChild(nowaprime)
@@ -141,6 +160,7 @@ func getRoot(w http.ResponseWriter, r *http.Request) {
 func main() {
 	http.HandleFunc("/", getRoot)
 	http.HandleFunc("/about", getAbout)
+	http.HandleFunc("/fredag", getFredag)
 	http.HandleFunc("/isnowaprime", getPrime)
 	http.HandleFunc("/source", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Got /source request")
