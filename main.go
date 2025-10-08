@@ -26,7 +26,7 @@ func getAbout(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "text/html")
 
 	head := header{}
-	pageBody := element{tag: "body"}
+	pageBody := element{tag: "body", attributes: []attribute{{name: "style", value: "font-family:monospace;"}}}
 
 	pageBody.AppendChild(element{tag: "h1", innerText: "About"})
 	pageBody.AppendChild(element{tag: "p", innerText: "This server is running on a Raspberry Pi 5 I have at home.<br>It's running Go for the backend, where I've written some code to generate the HTML. You can find that ",
@@ -71,9 +71,8 @@ func getFactors(n int) []int {
 func getPrime(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Got /isnowaprime request")
 
-	w.Header().Add("Content-Type", "text/html")
-
 	pageBody := element{tag: "body"}
+	head := header{}
 
 	now, _ := strconv.Atoi("20" + time.Now().Format("0601021504"))
 	pageBody.AppendChild(element{tag: "h1", innerText: "Is now a prime?"})
@@ -107,7 +106,8 @@ func getPrime(w http.ResponseWriter, r *http.Request) {
 		}
 		pageBody.AppendChild(element{tag: "p", innerText: "Here is the next prime:"})
 		pageBody.AppendChild(element{tag: "p", innerText: strconv.Itoa(prime)})*/
-
+	w.Header().Add("Content-Type", "text/html")
+	io.WriteString(w, head.HTML())
 	io.WriteString(w, pageBody.HTML())
 }
 
@@ -120,22 +120,25 @@ func getRoot(w http.ResponseWriter, r *http.Request) {
 	nowaprime := element{}
 	about.createBtn("About", "https://pi.rasj.dk/about")
 	nowaprime.createBtn("Is now a prime?", "https://pi.rasj.dk/isnowaprime")
-	
+
 	pageBody.AppendChild(element{tag: "h1", innerText: "Example page"})
-	pageBody.AppendChild(element{tag: "p", innerText: "The time is currently " + time.Now().Format("15:04")})
 	pageBody.AppendChild(about)
 	pageBody.AppendChild(nowaprime)
+	pageBody.AppendChild(element{tag: "p", innerText: "The time is currently " + time.Now().Format("15:04")})
 
 	w.Header().Add("Content-Type", "text/html")
 	io.WriteString(w, head.HTML())
 	io.WriteString(w, pageBody.HTML())
-	//io.WriteString(w, ().HTML())
 }
 
 func main() {
 	http.HandleFunc("/", getRoot)
 	http.HandleFunc("/about", getAbout)
 	http.HandleFunc("/isnowaprime", getPrime)
+	http.HandleFunc("/source", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println("Got /source request")
+		http.Redirect(w, r, "https://github.com/RasmusStJa/rasj.dk", http.StatusMovedPermanently)
+	})
 
 	err := http.ListenAndServe(":3000", nil)
 	if errors.Is(err, http.ErrServerClosed) {
