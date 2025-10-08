@@ -31,7 +31,7 @@ func getAbout(w http.ResponseWriter, r *http.Request) {
 
 	pageBody.AppendChild(element{tag: "h1", innerText: "About"})
 	pageBody.AppendChild(element{tag: "p", innerText: "This server is running on a Raspberry Pi 5 I have at home.<br>It's running Go for the backend, where I've written some code to generate the HTML. You can find that ",
-		children: []element{{tag: "a", innerText: "here.", attributes: []attribute{{name: "href", value: "https://github.com/RasmusStJa/rasj.dk"}}}}})
+		children: []element{{tag: "a", innerText: "here.", attributes: []attribute{{name: "href", value: "https://pi.rasj.dk/source"}}}}})
 
 	io.WriteString(w, head.HTML())
 	io.WriteString(w, pageBody.HTML())
