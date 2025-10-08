@@ -37,6 +37,11 @@ func (e *element) createBtn(name string, url string) {
 	e.attributes = []attribute{{name: "onclick", value: "location.href=\"" + url + "\""}}
 }
 
+func (e *element) createBody() {
+	e.tag = "body"
+	e.attributes = []attribute{{name: "style", value: "font-family:monospace;"}}
+}
+
 func (e element) HTML() string {
 	if e.tag == "" {
 		panic("This element has an undefined tag: " + e.HTML())
