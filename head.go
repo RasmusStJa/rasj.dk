@@ -14,10 +14,6 @@ type header struct {
 	stylepath string
 }
 
-func (h *header) AppendChild(e element) {
-	h.children = append(h.children, e)
-}
-
 func (h header) HTML() string {
 	var result string
 	head := element{tag:"header"}
