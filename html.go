@@ -49,12 +49,14 @@ func (e *element) CreateBody() {
 }
 
 func (e *element) CreateNavBar() {
+	const url string = "https://pi.rasj.dk/"
 	e.tag = "div"
 	btn := element{}
-	btn.CreateBtn("About", "https://pi.rasj.dk/about")
+	btn.CreateBtn("About", url+"about")
 	e.AppendChild(btn)
-	btn.CreateBtn("Is now a prime?", "https://pi.rasj.dk/isnowaprime")
+	btn.CreateBtn("Is now a prime?", url+"isnowaprime")
 	e.AppendChild(btn)
+	btn.CreateBtn("Er det fredag idag?", url+"fredag")
 }
 
 func (e element) HTML() string {
