@@ -1,154 +1,100 @@
 package main
 
 import (
-	"errors"
 	"fmt"
-	"io"
-	"net/http"
-	"os"
+	"slices"
 	"strconv"
-	"time"
+	"strings"
+	//"log"
+	//"net/http"
 )
 
+var legalTypes = []string{"button", "collapse", "end"}
+
+type link struct {
+	baseURL string
+	dirs    []string
+}
+
+func (l *link) resetDir()            { l.dirs = nil }
+func (l *link) addDir(newDir string) { l.dirs = append(l.dirs, newDir) }
+func (l *link) rmDirs(count int) {
+	length := len(l.dirs)
+	if length == count {
+		l.resetDir()
+	} else if count > 0 && length > count {
+		l.dirs = l.dirs[:length-count]
+	}
+}
+func (l link) get() string {
+	result := l.baseURL
+	for _, dir := range l.dirs {
+		result += dir
+	}
+	return result
+}
+
+type navBtn struct {
+	name, dir, btnType string
+}
+
+func (btn *navBtn) setName(name string)    { btn.name = name }
+func (btn *navBtn) setDir(dir string)      { btn.dir = dir }
+func (btn *navBtn) setType(btnType string) { btn.btnType = btnType }
+func (btn navBtn) HTML(url *link) string {
+	var result string
+	switch btn.btnType {
+	case legalTypes[0]: //button
+		result = "<button onclick=\"location.href='" + url.get() + btn.dir + "'\">" + btn.name + "</button>"
+	case legalTypes[1]: //collapse
+		url.addDir(btn.dir)
+		result = "<button id='toggleButton'>" + btn.name + ":" + "</button>" + "<div id='collapsibleDiv' style='display: none;'>"
+	case legalTypes[2]: //end
+		//TODO: come up with better name than "name" (should be smth like amount of ends)
+		switch strings.ToLower(btn.name) {
+		case "all": //remove everything
+			for range len(url.dirs) {
+				result += "</div>"
+			}
+
+			url.resetDir()
+		case "": //remove 1 time
+			if len(url.dirs) >= 1 {
+				url.rmDirs(1)
+				result = "</div>"
+			}
+		default: //remove n times
+			count, err := strconv.Atoi(btn.name) //string (anything) to int
+			if err != nil {
+				panic(err)
+			}
+			if len(url.dirs) >= count {
+				for range count {
+					result += "</div>"
+				}
+				url.resetDir()
+			}
+		}
+	}
+	return result
+}
 /*
-	func getNavbar() navBar {
-		var mainNavBar navBar
-		mainNavBar.AppendBtn(navBtn{name: "Forside", dir: "/", btnType: "button"})
-		mainNavBar.AppendBtn(navBtn{name: "Help", dir: "/help", btnType: "button"})
-		mainNavBar.AppendBtn(navBtn{name: "Spil", dir: "/spil", btnType: "collapse"})
-		mainNavBar.AppendBtn(navBtn{name: "Wordle", dir: "/wordle", btnType: "button"})
-		mainNavBar.AppendBtn(navBtn{btnType: "end"})
-		return mainNavBar
+type navBar struct{ btnContainer []navBtn }
+
+func (nb *navBar) appendBtn(btn navBtn) {
+	nb.btnContainer = append(nb.btnContainer, btn)
+}
+func (nb navBar) HTML() string {
+	var result string
+	url := link{baseURL: "https://rasj.dk"}
+	for _, btn2 := range nb.btnContainer {
+		if slices.Contains(legalTypes, btn2.btnType) {
+			result += btn2.HTML(&url)
+			continue
+		}
+		fmt.Println(btn2.name, "has illegal type:", btn2.btnType)
+		break
 	}
+	return result
+}
 */
-func getAbout(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Got /about request")
-	w.Header().Add("Content-Type", "text/html")
-
-	head := header{}
-	pageBody := element{}
-	pageBody.createBody()
-
-	pageBody.AppendChild(element{tag: "h1", innerText: "About"})
-	pageBody.AppendChild(element{tag: "p", innerText: "This server is running on a Raspberry Pi 5 I have at home.<br>It's running Go for the backend, where I've written some code to generate the HTML. You can find that ",
-		children: []element{{tag: "a", innerText: "here.", attributes: []attribute{{name: "href", value: "https://github.com/RasmusStJa/rasj.dk"}}}}})
-
-	io.WriteString(w, head.HTML())
-	io.WriteString(w, pageBody.HTML())
-}
-
-func isprime(n int) bool {
-	if n < 2 || n%2 == 0 {
-		return false
-	}
-
-	for i := 3; i*i <= n; i += 2 {
-		if n%i == 0 {
-			return false
-		}
-	}
-	return true
-}
-
-func getFactors(n int) []int {
-	if n < 2 || n%2 == 0 {
-		return []int{}
-	}
-	if n == 2 {
-		return []int{2}
-	}
-	factors := []int{}
-	for i := 3; i*i <= n; i += 2 {
-		if n%i == 0 {
-			factors = append(factors, i)
-		}
-	}
-	if n > 1 {
-		factors = append(factors, n/factors[len(factors)-1])
-	}
-	return factors
-}
-
-func getPrime(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Got /isnowaprime request")
-
-	pageBody := element{}
-	pageBody.createBody()
-	head := header{}
-
-	now, _ := strconv.Atoi("20" + time.Now().Format("0601021504"))
-	pageBody.AppendChild(element{tag: "h1", innerText: "Is now a prime?"})
-	pageBody.AppendChild(element{tag: "p", innerText: "Is " + strconv.Itoa(now) + " a prime?"})
-	if isprime(now) {
-		pageBody.AppendChild(element{tag: "p", innerText: "Yes"})
-	} else {
-		pageBody.AppendChild(element{tag: "p", innerText: "No"})
-		factors := getFactors(now)
-		if len(factors) > 0 {
-			pageBody.AppendChild(element{tag: "p", innerText: "Here are its factors:"})
-			list := element{tag: "ul", children: []element{}}
-
-			for _, f := range factors {
-				list.AppendChild(element{tag: "li", innerText: strconv.Itoa(f)})
-			}
-			pageBody.AppendChild(list)
-		}
-	}
-	/*
-		var prime int
-		var offset uint16 = 1
-		for {
-			d1 := time.Now().Add(time.Minute * time.Duration(offset))
-			d2, _ := strconv.Atoi(d1.Format("0601021504"))
-			if isprime(d2) {
-				prime = d2
-				break
-			}
-			offset++
-		}
-		pageBody.AppendChild(element{tag: "p", innerText: "Here is the next prime:"})
-		pageBody.AppendChild(element{tag: "p", innerText: strconv.Itoa(prime)})*/
-	w.Header().Add("Content-Type", "text/html")
-	io.WriteString(w, head.HTML())
-	io.WriteString(w, pageBody.HTML())
-}
-
-func getRoot(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Got / request")
-	head := header{}
-
-	pageBody := element{}
-	about := element{}
-	nowaprime := element{}
-	
-	pageBody.createBody()
-	about.createBtn("About", "https://pi.rasj.dk/about")
-	nowaprime.createBtn("Is now a prime?", "https://pi.rasj.dk/isnowaprime")
-
-	pageBody.AppendChild(element{tag: "h1", innerText: "Example page"})
-	pageBody.AppendChild(about)
-	pageBody.AppendChild(nowaprime)
-	pageBody.AppendChild(element{tag: "p", innerText: "The time is currently " + time.Now().Format("15:04")})
-
-	w.Header().Add("Content-Type", "text/html")
-	io.WriteString(w, head.HTML())
-	io.WriteString(w, pageBody.HTML())
-}
-
-func main() {
-	http.HandleFunc("/", getRoot)
-	http.HandleFunc("/about", getAbout)
-	http.HandleFunc("/isnowaprime", getPrime)
-	http.HandleFunc("/source", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("Got /source request")
-		http.Redirect(w, r, "https://github.com/RasmusStJa/rasj.dk", http.StatusMovedPermanently)
-	})
-
-	err := http.ListenAndServe(":3000", nil)
-	if errors.Is(err, http.ErrServerClosed) {
-		fmt.Println("Server is closed")
-	} else if err != nil {
-		fmt.Printf("Error starting server: %s\n", err)
-		os.Exit(1)
-	}
-}
