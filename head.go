@@ -15,7 +15,6 @@ type header struct {
 }
 
 func (h header) HTML() string {
-	var result string
 	head := element{tag:"header"}
 
 	stylesheet := element{tag: "link"}
