@@ -26,7 +26,8 @@ func getAbout(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "text/html")
 
 	head := header{}
-	pageBody := element{tag: "body", attributes: []attribute{{name: "style", value: "font-family:monospace;"}}}
+	pageBody := element{}
+	pageBody.createBody()
 
 	pageBody.AppendChild(element{tag: "h1", innerText: "About"})
 	pageBody.AppendChild(element{tag: "p", innerText: "This server is running on a Raspberry Pi 5 I have at home.<br>It's running Go for the backend, where I've written some code to generate the HTML. You can find that ",
@@ -71,7 +72,8 @@ func getFactors(n int) []int {
 func getPrime(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Got /isnowaprime request")
 
-	pageBody := element{tag: "body"}
+	pageBody := element{}
+	pageBody.createBody()
 	head := header{}
 
 	now, _ := strconv.Atoi("20" + time.Now().Format("0601021504"))
@@ -115,9 +117,11 @@ func getRoot(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Got / request")
 	head := header{}
 
-	pageBody := element{tag: "body"}
+	pageBody := element{}
 	about := element{}
 	nowaprime := element{}
+	
+	pageBody.createBody()
 	about.createBtn("About", "https://pi.rasj.dk/about")
 	nowaprime.createBtn("Is now a prime?", "https://pi.rasj.dk/isnowaprime")
 
