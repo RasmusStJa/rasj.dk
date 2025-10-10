@@ -167,10 +167,11 @@ func main() {
 		http.Redirect(w, r, "https://github.com/RasmusStJa/rasj.dk", http.StatusMovedPermanently)
 	})
 
-	http.Handle("/file/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("Got /file/ request")
-		http.FileServer(w, r, http.Dir("./static"))
-	}) //serve any files in a "static" dir
+	http.Handle("/file/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		fmt.Printf("Got /file/ request for: %s\n", r.URL.Path)
+		http.StripPrefix("/file/", fileServer).ServeHTTP(w, r)
+	}))
+ //serve any files in a "static" dir
 
 	err := http.ListenAndServe(":3000", nil)
 	if errors.Is(err, http.ErrServerClosed) {
