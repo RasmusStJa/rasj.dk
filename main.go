@@ -169,9 +169,9 @@ func main() {
 
 	http.Handle("/file/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		fmt.Printf("Got /file/ request for: %s\n", r.URL.Path)
-		http.StripPrefix("/file/", fileServer).ServeHTTP(w, r)
+		http.StripPrefix("/file/", http.FileServer(http.Dir("./static"))).ServeHTTP(w, r)
 	}))
- //serve any files in a "static" dir
+ 	//serve any files in a "static" dir
 
 	err := http.ListenAndServe(":3000", nil)
 	if errors.Is(err, http.ErrServerClosed) {
