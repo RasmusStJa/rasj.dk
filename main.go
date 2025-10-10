@@ -167,7 +167,7 @@ func main() {
 		http.Redirect(w, r, "https://github.com/RasmusStJa/rasj.dk", http.StatusMovedPermanently)
 	})
 
-	http.Handle("/", http.FileServer(http.Dir("./static"))) //serve any files in a "static" dir
+	http.Handle("/file", http.FileServer(http.Dir("./static"))) //serve any files in a "static" dir
 
 	err := http.ListenAndServe(":3000", nil)
 	if errors.Is(err, http.ErrServerClosed) {
