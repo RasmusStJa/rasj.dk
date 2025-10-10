@@ -169,7 +169,7 @@ func main() {
 
 	http.Handle("/file/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Got /file/ request")
-		http.FileServer(http.Dir("./static"))
+		http.FileServer(w, r, http.Dir("./static"))
 	}) //serve any files in a "static" dir
 
 	err := http.ListenAndServe(":3000", nil)
