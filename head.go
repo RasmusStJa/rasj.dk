@@ -35,7 +35,7 @@ func (h header) HTML() string {
 
 	_, filename, _, _ := runtime.Caller(1)
 	title := element{tag: "title"}
-	title.innerText = "pi.rasj.dk - " + strings.Split(filename, ".")[0]
+	title.innerText = "rasj.dk - " + strings.Split(filename, ".")[0]
 
 	head.AppendChild(stylesheet)
 	head.AppendChild(charset)
