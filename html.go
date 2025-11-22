@@ -49,7 +49,7 @@ func (e *element) CreateBody() {
 }
 
 func (e *element) CreateNavBar() {
-	const url string = "https://pi.rasj.dk/"
+	const url string = "https://rasj.dk/"
 	e.tag = "div"
 	btn := element{}
 	btn.CreateBtn("About", url+"about")
