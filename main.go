@@ -173,7 +173,7 @@ func main() {
 	}))
  	//serve any files in a "static" dir
 
-	err := http.ListenAndServe(":3000", nil)
+	err := http.ListenAndServe(":8080", nil)
 	if errors.Is(err, http.ErrServerClosed) {
 		fmt.Println("Server is closed")
 	} else if err != nil {
