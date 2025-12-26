@@ -19,17 +19,24 @@ type element struct {
 	children   []element
 }
 
+func (e element) createLink(s string, param2 string) {
+	panic("unimplemented")
+}
+
 func (e *element) AppendAttribute(attr attribute) {
 	e.attributes = append(e.attributes, attr)
 }
+
 func (e *element) AppendChild(child element) {
 	e.children = append(e.children, child)
 }
+
 func (e *element) AppendChildren(children []element) {
 	for _, child := range children {
 		e.AppendChild(child)
 	}
 }
+
 func (e *element) Clear() {
 	e.tag = ""
 	e.attributes = []attribute{}
@@ -43,6 +50,17 @@ func (e *element) CreateBtn(name string, url string) {
 	e.attributes = []attribute{{name: "onclick", value: "location.href=\"" + url + "\""}}
 }
 
+func (e *element) CreateLink(text string, domain string) {
+	e.tag = "a"
+	if text == "" {
+		e.innerText = domain
+	} else {
+		e.innerText = text
+	}
+
+	e.attributes = []attribute{{name: "href", value: "https://" + domain}}
+}
+
 func (e *element) CreateBody() {
 	e.tag = "body"
 	e.attributes = []attribute{{name: "style", value: "font-family:monospace;"}}
@@ -52,10 +70,13 @@ func (e *element) CreateNavBar() {
 	const url string = "https://rasj.dk/"
 	e.tag = "div"
 	btn := element{}
+
 	btn.CreateBtn("About", url+"about")
 	e.AppendChild(btn)
+
 	btn.CreateBtn("Is now a prime?", url+"isnowaprime")
 	e.AppendChild(btn)
+
 	btn.CreateBtn("Er det fredag idag?", url+"fredag")
 	e.AppendChild(btn)
 }
@@ -64,16 +85,19 @@ func (e element) HTML() string {
 	if e.tag == "" {
 		panic("This element has an undefined tag: " + e.HTML())
 	}
+
 	var result string
+
 	result = "<" + e.tag
 	for _, attr := range e.attributes {
 		result += attr.HTML()
 	}
-
 	result += ">" + e.innerText
+
 	for _, child := range e.children {
 		result += child.HTML()
 	}
+
 	result += "</" + e.tag + ">"
 	return result
 }

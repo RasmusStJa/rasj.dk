@@ -27,11 +27,18 @@ func getAbout(w http.ResponseWriter, r *http.Request) {
 
 	head := header{}
 	pageBody := element{}
+	source := element{}
+	pinggy := element{}
+	source.CreateLink("here.", "github.com/RasmusStJa/rasj.dk")
+	pinggy.CreateLink("", "pinggy.io")
 	pageBody.CreateBody()
 
 	pageBody.AppendChild(element{tag: "h1", innerText: "About"})
+
 	pageBody.AppendChild(element{tag: "p", innerText: "This server is running on a Raspberry Pi 5 I have at home.<br>It's running Go for the backend, where I've written some code to generate the HTML. You can find that ",
-		children: []element{{tag: "a", innerText: "here.", attributes: []attribute{{name: "href", value: "https://pi.rasj.dk/source"}}}}})
+		children: []element{source}})
+	pageBody.AppendChild(element{tag: "p", innerText: "And because of my isp, I'm required to run this through ",
+		children: []element{pinggy}})
 
 	io.WriteString(w, head.HTML())
 	io.WriteString(w, pageBody.HTML())
@@ -71,6 +78,7 @@ func getFactors(n int) []int {
 
 func getPrime(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Got /isnowaprime request")
+	w.Header().Add("Content-Type", "text/html")
 
 	pageBody := element{}
 	pageBody.CreateBody()
@@ -79,6 +87,7 @@ func getPrime(w http.ResponseWriter, r *http.Request) {
 	now, _ := strconv.Atoi("20" + time.Now().Format("0601021504"))
 	pageBody.AppendChild(element{tag: "h1", innerText: "Is now a prime?"})
 	pageBody.AppendChild(element{tag: "p", innerText: "Is " + strconv.Itoa(now) + " a prime?"})
+
 	if isprime(now) {
 		pageBody.AppendChild(element{tag: "p", innerText: "Yes"})
 	} else {
@@ -94,21 +103,7 @@ func getPrime(w http.ResponseWriter, r *http.Request) {
 			pageBody.AppendChild(list)
 		}
 	}
-	/*
-		var prime int
-		var offset uint16 = 1
-		for {
-			d1 := time.Now().Add(time.Minute * time.Duration(offset))
-			d2, _ := strconv.Atoi(d1.Format("0601021504"))
-			if isprime(d2) {
-				prime = d2
-				break
-			}
-			offset++
-		}
-		pageBody.AppendChild(element{tag: "p", innerText: "Here is the next prime:"})
-		pageBody.AppendChild(element{tag: "p", innerText: strconv.Itoa(prime)})*/
-	w.Header().Add("Content-Type", "text/html")
+
 	io.WriteString(w, head.HTML())
 	io.WriteString(w, pageBody.HTML())
 }
@@ -171,7 +166,7 @@ func main() {
 		fmt.Printf("Got /file/ request for: %s\n", r.URL.Path)
 		http.StripPrefix("/file/", http.FileServer(http.Dir("./static"))).ServeHTTP(w, r)
 	}))
- 	//serve any files in a "static" dir
+	//serve any files in a static dir
 
 	err := http.ListenAndServe(":8080", nil)
 	if errors.Is(err, http.ErrServerClosed) {
