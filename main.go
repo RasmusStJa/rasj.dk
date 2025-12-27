@@ -37,7 +37,7 @@ func getAbout(w http.ResponseWriter, r *http.Request) {
 
 	pageBody.AppendChild(element{tag: "p", innerText: "This server is running on a Raspberry Pi 5 I have at home.<br>It's running Go for the backend, where I've written some code to generate the HTML. You can find that ",
 		children: []element{source}})
-	pageBody.AppendChild(element{tag: "p", innerText: "And because of my isp, I'm required to run this through ",
+	pageBody.AppendChild(element{tag: "p", innerText: "And because of my isp, I'm required to run this through a reverse proxy service, like ",
 		children: []element{pinggy}})
 
 	io.WriteString(w, head.HTML())
