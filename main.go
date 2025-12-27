@@ -10,25 +10,12 @@ import (
 	"time"
 )
 
-/*
-	func getNavbar() navBar {
-		var mainNavBar navBar
-		mainNavBar.AppendBtn(navBtn{name: "Forside", dir: "/", btnType: "button"})
-		mainNavBar.AppendBtn(navBtn{name: "Help", dir: "/help", btnType: "button"})
-		mainNavBar.AppendBtn(navBtn{name: "Spil", dir: "/spil", btnType: "collapse"})
-		mainNavBar.AppendBtn(navBtn{name: "Wordle", dir: "/wordle", btnType: "button"})
-		mainNavBar.AppendBtn(navBtn{btnType: "end"})
-		return mainNavBar
-	}
-*/
 func getAbout(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Got /about request")
 	w.Header().Add("Content-Type", "text/html")
 
-	head := header{}
-	pageBody := element{}
-	source := element{}
-	pinggy := element{}
+	var head header
+	var pageBody, source, pinggy element
 	source.CreateLink("here.", "github.com/RasmusStJa/rasj.dk")
 	pinggy.CreateLink("", "pinggy.io")
 	pageBody.CreateBody()
@@ -44,51 +31,51 @@ func getAbout(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, pageBody.HTML())
 }
 
-func isprime(n int) bool {
-	if n < 2 || n%2 == 0 {
-		return false
-	}
-
-	for i := 3; i*i <= n; i += 2 {
-		if n%i == 0 {
-			return false
-		}
-	}
-	return true
-}
-
-func getFactors(n int) []int {
-	if n < 2 || n%2 == 0 {
-		return []int{}
-	}
-	if n == 2 {
-		return []int{2}
-	}
-	factors := []int{}
-	for i := 3; i*i <= n; i += 2 {
-		if n%i == 0 {
-			factors = append(factors, i)
-		}
-	}
-	if n > 1 {
-		factors = append(factors, n/factors[len(factors)-1])
-	}
-	return factors
-}
-
 func getPrime(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Got /isnowaprime request")
 	w.Header().Add("Content-Type", "text/html")
 
-	pageBody := element{}
+	getFactors := func(n int) []int {
+		if n < 2 || n%2 == 0 {
+			return []int{}
+		}
+		if n == 2 {
+			return []int{2}
+		}
+		factors := []int{}
+		for i := 3; i*i <= n; i += 2 {
+			if n%i == 0 {
+				factors = append(factors, i)
+			}
+		}
+		if n > 1 {
+			factors = append(factors, n/factors[len(factors)-1])
+		}
+		return factors
+	}
+
+	isPrime := func(n int) bool {
+		if n < 2 || n%2 == 0 {
+			return false
+		}
+
+		for i := 3; i*i <= n; i += 2 {
+			if n%i == 0 {
+				return false
+			}
+		}
+		return true
+	}
+
+	var pageBody element
 	pageBody.CreateBody()
-	head := header{}
+	var head header
 
 	now, _ := strconv.Atoi("20" + time.Now().Format("0601021504"))
 	pageBody.AppendChild(element{tag: "h1", innerText: "Is now a prime?"})
 	pageBody.AppendChild(element{tag: "p", innerText: "Is " + strconv.Itoa(now) + " a prime?"})
 
-	if isprime(now) {
+	if isPrime(now) {
 		pageBody.AppendChild(element{tag: "p", innerText: "Yes"})
 	} else {
 		pageBody.AppendChild(element{tag: "p", innerText: "No"})
@@ -111,8 +98,8 @@ func getPrime(w http.ResponseWriter, r *http.Request) {
 func getFredag(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("got /fredag request")
 
-	head := header{}
-	pageBody := element{}
+	var head header
+	var pageBody element
 
 	pageBody.CreateBody()
 
@@ -134,14 +121,13 @@ func getFredag(w http.ResponseWriter, r *http.Request) {
 func getRoot(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Got / request")
 
-	head := header{}
-	pageBody := element{}
-	navBar := element{}
+	var head header
+	var pageBody, navBar element
 
 	pageBody.CreateBody()
 
 	navBar.CreateNavBar()
-	pageBody.AppendChild(element{tag: "h1", innerText: "Example page"})
+	pageBody.AppendChild(element{tag: "h1", innerText: "Home page"})
 	//pageBody.AppendChild(about)
 	//pageBody.AppendChild(nowaprime)
 	pageBody.AppendChild(navBar)
