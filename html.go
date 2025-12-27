@@ -19,10 +19,6 @@ type element struct {
 	children   []element
 }
 
-func (e element) createLink(s string, param2 string) {
-	panic("unimplemented")
-}
-
 func (e *element) AppendAttribute(attr attribute) {
 	e.attributes = append(e.attributes, attr)
 }
@@ -47,7 +43,7 @@ func (e *element) Clear() {
 func (e *element) CreateBtn(name string, url string) {
 	e.tag = "button"
 	e.innerText = name
-	e.attributes = []attribute{{name: "onclick", value: "location.href=\"" + url + "\""}}
+	e.attributes = []attribute{{name: "onclick", value: "location.href=\"https://" + url + "\""}}
 }
 
 func (e *element) CreateLink(text string, domain string) {
@@ -67,7 +63,7 @@ func (e *element) CreateBody() {
 }
 
 func (e *element) CreateNavBar() {
-	const url string = "https://rasj.dk/"
+	const url string = "rasj.dk/"
 	e.tag = "div"
 	btn := element{}
 
@@ -81,9 +77,9 @@ func (e *element) CreateNavBar() {
 	e.AppendChild(btn)
 }
 
-func (e element) HTML() string {
+func (e *element) HTML() string {
 	if e.tag == "" {
-		panic("This element has an undefined tag: " + e.HTML())
+		panic("This element has an undefined tag: " + e.innerText)
 	}
 
 	var result string
