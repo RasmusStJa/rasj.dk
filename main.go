@@ -84,7 +84,7 @@ func getPrime(w http.ResponseWriter, r *http.Request) {
 		factors := getFactors(now)
 		if len(factors) > 0 {
 			pageBody.AppendChild(element{tag: "p", innerText: "Here are its factors:"})
-			list := element{tag: "ul", children: []element{}}
+			list := element{tag: "ul"}
 
 			for _, f := range factors {
 				list.AppendChild(element{tag: "li", innerText: strconv.Itoa(f)})
