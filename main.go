@@ -42,12 +42,14 @@ func getPrime(w http.ResponseWriter, r *http.Request) {
 		if n == 2 {
 			return []int{2}
 		}
+
 		factors := []int{}
 		for i := 3; i*i <= n; i += 2 {
 			if n%i == 0 {
 				factors = append(factors, i)
 			}
 		}
+
 		if n > 1 {
 			factors = append(factors, n/factors[len(factors)-1])
 		}

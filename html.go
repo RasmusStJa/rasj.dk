@@ -6,10 +6,10 @@ type attribute struct {
 }
 
 func (a attribute) HTML() string {
-	if a.value != "" {
-		return " " + a.name + "='" + a.value + "' "
+	if a.value == "" {
+		return " " + a.name + " "
 	}
-	return " " + a.name + " "
+	return " " + a.name + "='" + a.value + "' "
 }
 
 type element struct {
@@ -43,36 +43,40 @@ func (e *element) Clear() {
 func (e *element) CreateBtn(name string, url string) {
 	e.tag = "button"
 	e.innerText = name
-	e.attributes = []attribute{{name: "onclick", value: "location.href=\"https://" + url + "\""}}
+	e.AppendAttribute(attribute{name: "onclick", value: "location.href=\"https://" + url + "\""})
 }
 
 func (e *element) CreateLink(text string, domain string) {
 	e.tag = "a"
+
 	if text == "" {
 		e.innerText = domain
 	} else {
 		e.innerText = text
 	}
 
-	e.attributes = []attribute{{name: "href", value: "https://" + domain}}
+	e.AppendAttribute(attribute{name: "href", value: "https://" + domain})
 }
 
 func (e *element) CreateBody() {
 	e.tag = "body"
-	e.attributes = []attribute{{name: "style", value: "font-family:monospace;"}}
+	e.AppendAttribute(attribute{name: "style", value: "font-family:monospace;"})
 }
 
 func (e *element) CreateNavBar() {
 	const url string = "rasj.dk/"
+	var btn element
+
 	e.tag = "div"
-	btn := element{}
 
 	btn.CreateBtn("About", url+"about")
 	e.AppendChild(btn)
 
+	btn.Clear()
 	btn.CreateBtn("Is now a prime?", url+"isnowaprime")
 	e.AppendChild(btn)
 
+	btn.Clear()
 	btn.CreateBtn("Er det fredag idag?", url+"fredag")
 	e.AppendChild(btn)
 }
