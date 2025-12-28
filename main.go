@@ -22,10 +22,18 @@ func getAbout(w http.ResponseWriter, r *http.Request) {
 
 	pageBody.AppendChild(element{tag: "h1", innerText: "About"})
 
-	pageBody.AppendChild(element{tag: "p", innerText: "This server is running on a Raspberry Pi 5 I have at home.<br>It's running Go for the backend, where I've written some code to generate the HTML. You can find that ",
-		children: []element{source}})
-	pageBody.AppendChild(element{tag: "p", innerText: "And because of my isp, I'm required to run this through a reverse proxy service, like ",
-		children: []element{pinggy}})
+	pageBody.AppendChild(
+		element{
+			tag: "p", innerText: "This server is running on a Raspberry Pi 5 I have at home.<br>It's running Go for the backend, where I've written some code to generate the HTML. You can find that ",
+			children: []element{source},
+		},
+	)
+	pageBody.AppendChild(
+		element{
+			tag: "p", innerText: "And because of my isp, I'm required to run this through a reverse proxy service, like ",
+			children: []element{pinggy},
+		},
+	)
 
 	io.WriteString(w, head.HTML())
 	io.WriteString(w, pageBody.HTML())
@@ -150,11 +158,11 @@ func main() {
 		http.Redirect(w, r, "https://github.com/RasmusStJa/rasj.dk", http.StatusMovedPermanently)
 	})
 
+	//serve any files in a static dir
 	http.Handle("/file/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		fmt.Printf("Got /file/ request for: %s\n", r.URL.Path)
 		http.StripPrefix("/file/", http.FileServer(http.Dir("./static"))).ServeHTTP(w, r)
 	}))
-	//serve any files in a static dir
 
 	err := http.ListenAndServe(":8080", nil)
 	if errors.Is(err, http.ErrServerClosed) {
