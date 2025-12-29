@@ -58,9 +58,10 @@ func getPrime(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
-		if n > 1 {
-			factors = append(factors, n/factors[len(factors)-1])
-		}
+		for i := len(factors) - 1; i >= 0; i-- {
+	        factors = append(factors, n/factors[i])
+	    }
+		
 		return factors
 	}
 
