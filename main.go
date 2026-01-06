@@ -39,6 +39,38 @@ func getAbout(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, pageBody.HTML())
 }
 
+func getSofus(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("got /sofus request")
+
+	var head header
+	var pageBody element
+
+	pageBody.CreateBody()
+
+	pageBody.AppendChild(element{tag: "h1", innerText: "Er det Sofus' fødelsdag idag?"})
+
+	year, month, day := time.Now().Date()
+	if day == 12 && int(month) == 12 {
+		text := []string{
+			"JAAAAAA!!!!!!!\n",
+			"Tillykke med de " + strconv.Itoa(year-2004) + " år, Sofus!!!!\n",
+			"Hvis Sofus viser dig det her skal du officielt ønske ham tillykke NU",
+		}
+		textElm := element{tag: "p"}
+		
+		for _, t := range text {
+			textElm.innerText += t
+		}
+		pageBody.AppendChild(textElm)
+	} else {
+		pageBody.AppendChild(element{tag: "p", innerText: "Ikke endnu :("})
+	}
+
+	w.Header().Add("Content-Type", "text/html")
+	io.WriteString(w, head.HTML())
+	io.WriteString(w, pageBody.HTML())
+}
+
 func getPrime(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Got /isnowaprime request")
 	w.Header().Add("Content-Type", "text/html")
@@ -59,9 +91,9 @@ func getPrime(w http.ResponseWriter, r *http.Request) {
 		}
 
 		for i := len(factors) - 1; i >= 0; i-- {
-	        factors = append(factors, n/factors[i])
-	    }
-		
+			factors = append(factors, n/factors[i])
+		}
+
 		return factors
 	}
 
@@ -91,15 +123,14 @@ func getPrime(w http.ResponseWriter, r *http.Request) {
 	} else {
 		pageBody.AppendChild(element{tag: "p", innerText: "No"})
 		factors := getFactors(now)
-		if len(factors) > 0 {
-			pageBody.AppendChild(element{tag: "p", innerText: "Here are its factors:"})
-			list := element{tag: "ul"}
+		pageBody.AppendChild(element{tag: "p", innerText: "Here are its factors:"})
 
-			for _, f := range factors {
-				list.AppendChild(element{tag: "li", innerText: strconv.Itoa(f)})
-			}
-			pageBody.AppendChild(list)
+		list := element{tag: "ul"}
+
+		for _, f := range factors {
+			list.AppendChild(element{tag: "li", innerText: strconv.Itoa(f)})
 		}
+		pageBody.AppendChild(list)
 	}
 
 	io.WriteString(w, head.HTML())
@@ -153,6 +184,7 @@ func main() {
 	http.HandleFunc("/", getRoot)
 	http.HandleFunc("/about", getAbout)
 	http.HandleFunc("/fredag", getFredag)
+	http.HandleFunc("/sofus", getSofus)
 	http.HandleFunc("/isnowaprime", getPrime)
 	http.HandleFunc("/source", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Got /source request")
